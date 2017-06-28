@@ -1,66 +1,73 @@
 package main;
 
+import html.PageGenerator;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.*;
+import org.eclipse.jetty.server.handler.AbstractHandler;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Created by Murat on 23.06.2017.
+ * Created by Murat on 27.06.2017.
  */
-public class Frontend extends AbstractHandler implements Runnable {
-    private static String GAME_NAME = "/test/"; // что за имя игры?
-    private Address address;
-    private MessageSystem ms;
+public class Frontend extends HttpServlet {
+    private AtomicInteger value = new AtomicInteger();
 
-    private Map<String, Integer> nameToId = new HashMap<>();
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-    public Address getAddress() {
-        return address;
-    }
 
-    public void handle (String target,Request baseRequest,
-                        HttpServletRequest request,
-                        HttpServletResponse response)
-            throws IOException, ServletException {
+        Map<String, Object> pageVariables = createPageVariablesMap(request);
+        pageVariables.put("message", "YourSessionId");
+
+        response.getWriter().println(PageGenerator.instance().getPage("page.html", pageVariables));
 
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
-        baseRequest.setHandled(true);
 
-        // что это?
-       //if (!target.equals(GAME_NAME))
-       //     return;
-
-        String name = "Tully";
-        Integer id = nameToId.get(name);
-
-        if (id != null) {
-            response.getWriter().println("<h1>User name: " + name + " Id: " + id +" </h1>"); // Ответ клиенту с id
-        } else {
-            response.getWriter().println("<h1>Wait for authorization</h1>"); // Ответ клиенту без id (первая сессия) + действия
-            Address addressAS = ms.getAddressService().getAddress(AccountService.class); //nullpointer
-            ms.sendMessage(new MsgGetUserId(getAddress(), addressAS, name));
-        }
 
     }
 
 
     @Override
-    public void run() {
-        while (true) {
-            TimeHelper.sleep(10);
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        Map<String, Object> pageVariables = createPageVariablesMap(request);
+        pageVariables.put("message", "HelloUserYourSessionId");
+
+        response.getWriter().println(PageGenerator.instance().getPage("page.html", pageVariables));
+
+        response.setContentType("text/html;charset=utf-8");
+        response.setStatus(HttpServletResponse.SC_OK);
+    }
+
+    private Map<String,Object> createPageVariablesMap(HttpServletRequest request) {
+        Map<String, Object> pageVariables = new HashMap<>();
+
+        if (request.getParameter("sessionId")==null) {
+            pageVariables.put("sessionId", getId());
+            return pageVariables;
+        } else {
+            pageVariables.put("sessionId",request.getParameter("sessionId"));
+            return pageVariables;
         }
+
+
     }
 
-    public void setId (String name, Integer id) {
-        nameToId.put(name, id);
+
+
+    public Integer getId() {
+        return value.getAndIncrement();
     }
-
-
 }
+
