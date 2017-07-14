@@ -10,6 +10,8 @@ import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 import javax.servlet.Servlet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 /**
@@ -18,12 +20,18 @@ import javax.servlet.Servlet;
  */
 public class Main
 {
-    public static void main( String[] args ) throws Exception {
+    private static final int N = 2;
+
+    public static void main(String[] args ) throws Exception {
         simpleServer();
+
     }
 
     private static void simpleServer() throws Exception,InterruptedException {
         Frontend frontend = new Frontend();
+
+        ExecutorService pool = Executors.newFixedThreadPool(N);
+        pool.submit(new Frontend());
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.addServlet(new ServletHolder(frontend), "/*");

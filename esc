@@ -1,0 +1,49 @@
+[33mcommit 982c31218e1c5b92e22bf893de53cb34b4e4f01b[m
+Author: Murat Slavich <muratslavich@gmail.com>
+Date:   Wed Jun 28 12:01:30 2017 +0700
+
+    first lesson passed
+
+ pom.xml                                 |  5 [32m+++[m
+ src/main/java/html/PageGenerator.java   | 61 [32m++++++++++++[m[31m---------------[m
+ src/main/java/html/index.html           | 10 [31m-----[m
+ src/main/java/main/Abonent.java         |  8 [31m----[m
+ src/main/java/main/AccountService.java  | 43 [31m-------------------[m
+ src/main/java/main/Address.java         | 20 [31m---------[m
+ src/main/java/main/AddressService.java  | 19 [31m---------[m
+ src/main/java/main/Frontend.java        | 75 [32m++++++++++++++++++[m[31m---------------[m
+ src/main/java/main/Main.java            | 10 [32m++++[m[31m-[m
+ src/main/java/main/MessageSystem.java   | 38 [31m-----------------[m
+ src/main/java/main/Msg.java             | 24 [31m-----------[m
+ src/main/java/main/MsgGetUserId.java    | 19 [31m---------[m
+ src/main/java/main/MsgToAS.java         | 20 [31m---------[m
+ src/main/java/main/MsgToFrontend.java   | 21 [31m---------[m
+ src/main/java/main/MsgUpdateUserId.java | 21 [31m---------[m
+ src/main/java/main/TimeHelper.java      | 22 [31m----------[m
+ tml/page.html                           | 25 [32m+++++++++++[m
+ 17 files changed, 108 insertions(+), 333 deletions(-)
+
+[33mcommit 7072ba619cfdfa1a22382f9a2f84d9c2ce5ccf72[m
+Author: Murat Slavich <muratslavich@gmail.com>
+Date:   Sat Jun 24 10:13:56 2017 +0700
+
+    initial
+
+ .gitignore                              | 28 [32m++++++++++++++[m
+ pom.xml                                 | 61 [32m++++++++++++++++++++++++++++++[m
+ src/main/java/html/PageGenerator.java   | 41 [32m++++++++++++++++++++[m
+ src/main/java/html/index.html           | 10 [32m+++++[m
+ src/main/java/main/Abonent.java         |  8 [32m++++[m
+ src/main/java/main/AccountService.java  | 43 [32m+++++++++++++++++++++[m
+ src/main/java/main/Address.java         | 20 [32m++++++++++[m
+ src/main/java/main/AddressService.java  | 19 [32m++++++++++[m
+ src/main/java/main/Frontend.java        | 66 [32m+++++++++++++++++++++++++++++++++[m
+ src/main/java/main/Main.java            | 31 [32m++++++++++++++++[m
+ src/main/java/main/MessageSystem.java   | 38 [32m+++++++++++++++++++[m
+ src/main/java/main/Msg.java             | 24 [32m++++++++++++[m
+ src/main/java/main/MsgGetUserId.java    | 19 [32m++++++++++[m
+ src/main/java/main/MsgToAS.java         | 20 [32m++++++++++[m
+ src/main/java/main/MsgToFrontend.java   | 21 [32m+++++++++++[m
+ src/main/java/main/MsgUpdateUserId.java | 21 [32m+++++++++++[m
+ src/main/java/main/TimeHelper.java      | 22 [32m+++++++++++[m
+ 17 files changed, 492 insertions(+)
