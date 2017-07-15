@@ -5,6 +5,7 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
+import javax.imageio.metadata.IIOMetadataNode;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,41 +21,46 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Frontend extends HttpServlet implements Runnable {
 
-    private AtomicInteger value = new AtomicInteger();
+    private AtomicInteger value = new AtomicInteger(1);
     private static int handleCount = 1;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        response.setContentType("text/html;charset=utf-8");
-        response.setStatus(HttpServletResponse.SC_OK);
+        // создание сессии
+        HttpSession session = request.getSession();
+        String sessionId = session.getId();
 
         Map<String, Object> pageVariables = new HashMap<>();
 
-        HttpSession session = request.getSession();
-        Integer sessionId = (Integer) session.getAttribute("sessionId");
 
-        if (sessionId == null) {
-            sessionId = value.getAndIncrement();
-            session.setAttribute("sessionId", sessionId);
+        Integer userId = (Integer) session.getAttribute("userId");
+
+        if (userId == null) {
+            userId = value.getAndIncrement();
+            session.setAttribute("userId", userId);
             handleCount++;
         }
         pageVariables.put("sessionId", sessionId);
-        pageVariables.put("message", "YourSessionId");
+        pageVariables.put("userId", userId);
+        pageVariables.put("message", "YourS Id`s");
 
         response.getWriter().println(PageGenerator.instance().getPage("page.html", pageVariables));
 
+
+        response.setContentType("text/html;charset=utf-8");
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-        HttpSession session = request.getSession();
-        Integer sessionId = (Integer) session.getAttribute("sessionId");
+        String sessionId = request.getParameter("sessionId");
+        Integer userId = (Integer) request.getSession().getAttribute("userId");
         Map<String, Object> pageVariables = new HashMap<>();
         pageVariables.put("message", "HelloUserYourSessionId");
         pageVariables.put("sessionId", sessionId);
+        pageVariables.put("userId", userId);
+
         response.getWriter().println(PageGenerator.instance().getPage("page.html", pageVariables));
 
         response.setContentType("text/html;charset=utf-8");
