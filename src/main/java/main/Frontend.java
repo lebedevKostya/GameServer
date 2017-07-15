@@ -1,11 +1,7 @@
 package main;
 
 import html.PageGenerator;
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
 
-import javax.imageio.metadata.IIOMetadataNode;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -17,23 +13,35 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * Class who handles user requests
+ *
  * Created by Murat on 27.06.2017.
  */
 public class Frontend extends HttpServlet implements Runnable {
 
-    private AtomicInteger value = new AtomicInteger(1);
+    private AtomicInteger value = new AtomicInteger(3);
     private static int handleCount = 1;
+    private Map<String, UserProfile> sessionIdToUserProfile = new HashMap<>();
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // создание сессии
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // создание сессии и объкта пользавтеля при первом запросе и добавление их в карту sessionIdToUserSession
         HttpSession session = request.getSession();
         String sessionId = session.getId();
+        UserProfile userProfile = new UserProfile();
+        sessionIdToUserProfile.put(sessionId, userProfile);
 
+        // после чего возвращает пользователю страницу с sessionId, а так же запрос "Введите свое имя"
         Map<String, Object> pageVariables = new HashMap<>();
+        pageVariables.put("sessionId", sessionId);
+        response.getWriter().println(PageGenerator.instance().getPage("page.html", pageVariables));
 
 
-        Integer userId = (Integer) session.getAttribute("userId");
+
+
+        /*Integer userId = (Integer) session.getAttribute("userId");
 
         if (userId == null) {
             userId = value.getAndIncrement();
@@ -44,7 +52,7 @@ public class Frontend extends HttpServlet implements Runnable {
         pageVariables.put("userId", userId);
         pageVariables.put("message", "YourS Id`s");
 
-        response.getWriter().println(PageGenerator.instance().getPage("page.html", pageVariables));
+        response.getWriter().println(PageGenerator.instance().getPage("page.html", pageVariables));*/
 
 
         response.setContentType("text/html;charset=utf-8");
@@ -53,15 +61,29 @@ public class Frontend extends HttpServlet implements Runnable {
 
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String sessionId = request.getParameter("sessionId");
-        Integer userId = (Integer) request.getSession().getAttribute("userId");
-        Map<String, Object> pageVariables = new HashMap<>();
-        pageVariables.put("message", "HelloUserYourSessionId");
-        pageVariables.put("sessionId", sessionId);
-        pageVariables.put("userId", userId);
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-        response.getWriter().println(PageGenerator.instance().getPage("page.html", pageVariables));
+        // Вместе с именем приложение получает от пользователя ранее переданный ему sessionId,
+        String sessionId = request.getParameter("sessionId");
+        String userName = request.getParameter("userName");
+        // находит по этому Id объект пользовательской сессии и записывает в него присланное имя.
+        sessionIdToUserProfile.get(sessionId).setUserName(userName);
+        // После изменения объекта userSession приложение отправляет пользователю страницу с
+        // sessionId и статусом "Ждите авторизации".
+        Map<String, Object> pageVariables = new HashMap<>();
+        pageVariables.put("message", "Wait For Authorization");
+        pageVariables.put("sessionId", sessionId);
+        response.getWriter().println(PageGenerator.instance().getPage("wait.html", pageVariables));
+
+        // После отправки страницы приложение запрашивает у службы AccountService аутентификацию пользователя.
+        // Служба AccountService работает в отдельном потоке и может найти userId по имени пользователя
+        // (поиск может быть долгим, имитацию долгого поиска можно сделать через Thread.sleep(5000)).
+
+
+
+
+
 
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);

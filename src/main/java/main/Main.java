@@ -1,15 +1,9 @@
 package main;
 
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.handler.DefaultHandler;
-import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
-import javax.servlet.Servlet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -29,6 +23,10 @@ public class Main
 
     private static void simpleServer() throws Exception,InterruptedException {
         Frontend frontend = new Frontend();
+        AccountService accountService = new AccountService();
+
+        accountService.addNewUser(new UserProfile("admin", 1));
+        accountService.addNewUser(new UserProfile("test", 2));
 
         ExecutorService pool = Executors.newFixedThreadPool(N);
         pool.submit(new Frontend());

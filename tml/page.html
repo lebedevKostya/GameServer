@@ -2,23 +2,25 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8"/>
-    <title>Авторизация</title>
-
+    <title>Authorization</title>
+<!--
     <script type="text/javascript" >
         setTimeout(function () {
             document.getElementById("form").submit();
         }, 1000);
     </script>
-
+-->
 </head>
 
 
 <body>
 
-<form id="form" action="/page.html" method="POST">
+<form id="form" action="/" method="POST">
     <input type="hidden" name="sessionId" value="${sessionId}"/>
+    Login: <input type="text" name="userName" />
+    <input type="submit" value="Submit">
 </form>
-<p>${message}: ${userId}    ${sessionId}</p>
+<p>Your sessionId ::: ${sessionId}</p>
 
 
 </body>
