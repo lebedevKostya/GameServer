@@ -28,6 +28,12 @@ public class UserProfile {
         this.sessionId = "empty";
     }
 
+    public UserProfile(String userName) {
+        this.userName = userName;
+        this.userId = 0;
+        this.sessionId = "empty";
+    }
+
     public void setUserName(String userName) {
         this.userName = userName;
     }

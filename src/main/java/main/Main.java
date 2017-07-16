@@ -22,14 +22,14 @@ public class Main
     }
 
     private static void simpleServer() throws Exception,InterruptedException {
-        Frontend frontend = new Frontend();
+
         AccountService accountService = new AccountService();
+        Frontend frontend = new Frontend();
+        accountService.addNewUser(new UserProfile("admin"),1);
+        accountService.addNewUser(new UserProfile("test"),2);
 
-        accountService.addNewUser(new UserProfile("admin", 1));
-        accountService.addNewUser(new UserProfile("test", 2));
-
-        ExecutorService pool = Executors.newFixedThreadPool(N);
-        pool.submit(new Frontend());
+       /* ExecutorService pool = Executors.newFixedThreadPool(N);
+        pool.submit(new Frontend());*/
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.addServlet(new ServletHolder(frontend), "/*");

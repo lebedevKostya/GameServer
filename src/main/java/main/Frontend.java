@@ -79,11 +79,23 @@ public class Frontend extends HttpServlet implements Runnable {
         // После отправки страницы приложение запрашивает у службы AccountService аутентификацию пользователя.
         // Служба AccountService работает в отдельном потоке и может найти userId по имени пользователя
         // (поиск может быть долгим, имитацию долгого поиска можно сделать через Thread.sleep(5000)).
+        AccountService accountService = new AccountService(); // создает новый объект с другой картой!!!!!!!!!!!!!!!!!!!!!!!!!!
+        Integer userId = accountService.getUserIdByUserName(userName);
 
+        // добавить userId в объект userSession соответствующего пользователя.
+        sessionIdToUserProfile.get(sessionId).setUserId(userId);
 
+        // При следующем обращении пользователь получит страницу
+        // "Здравствуйте: " + userName + " ваш userId: " + userId;
+        if (userId != null) {
+            return;
+        }
 
-
-
+        // Если пользователь запрашивает страницу раньше, чем AccountService нашел userId по имени,
+        // он получает страницу с sessionId и статусом "Ждите авторизации".
+        if (userId == null) {
+            return;
+        }
 
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
